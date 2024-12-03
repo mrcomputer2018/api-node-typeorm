@@ -4,7 +4,7 @@ interface IUserInput {
     email: string
     password: string
     birth_date: Date
-    active: boolean
+    active?: boolean
 }
 
 interface IUserOutput extends IUserInput {
