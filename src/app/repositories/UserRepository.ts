@@ -21,7 +21,7 @@ export default class UserRepository {
         const user = await this.usersRepository.findOneBy({ id });
 
         if (!user) {
-            throw new ErrorExtension(401, "Usuário não encontrado");
+            throw new ErrorExtension(404, "Usuário não encontrado");
         }
 
         return user
