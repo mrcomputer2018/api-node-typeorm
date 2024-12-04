@@ -1,7 +1,9 @@
+import { ValidationError, ValidationErrorItem } from "joi";
 import User from "../../entity/User";
 import { IUserInput, IUserOutput} from "../../interfaces/IUser";
 import { AppDataSource } from "../../database/data-source";
 import ErrorExtension from "../utils/ErrorExtension";
+import userSchemaValiodation from "../utils/validations/userSchenaValidation";
 
 export default class UserRepository {
     //atributo privado para acessar o repositório de usuários
@@ -13,6 +15,15 @@ export default class UserRepository {
     }
 
     static async newUser(user: IUserInput): Promise<IUserOutput> {
+        //validando dados do usuário
+        const { error } = userSchemaValiodation.validate(user, { abortEarly: false });
+
+        if(error) {
+            const validationErrors = error.details.map(( details: ValidationErrorItem) => details.message);
+
+            throw new ErrorExtension(400, validationErrors.join(", "));
+        }
+
         const createdUser =  await this.usersRepository.save(user);
         return createdUser;
     }
@@ -42,5 +53,21 @@ export default class UserRepository {
         }
         
         return "Usuário atualizado com sucesso!!!";
+    }
+
+    static async deleteUser(id: number): Promise<string> {
+        const userExists = await this.usersRepository.findOneBy({ id });
+
+        if (!userExists) {
+            throw new ErrorExtension(404, "Usuário não encontrado");
+        }
+
+        const userDeleted = await this.usersRepository.delete(id);
+
+        if (!userDeleted) {
+            throw new ErrorExtension(500, "Erro ao deletar usuário");
+        }
+
+        return "Usuário deletado com sucesso!!!";
     }
 }

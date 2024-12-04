@@ -14,6 +14,7 @@ class UserController {
         this.router.post("/", this.createdUser);
         this.router.get("/:id", this.getUserById);
         this.router.put("/:id", this.updateUser);
+        this.router.delete("/:id", this.deleteUser);
     }
 
     private async getAllUsers(req: Request, res: Response) {
@@ -40,6 +41,13 @@ class UserController {
         const userUpdated = await UserRepository.updateUser(Number(id), req.body);
 
         res.status(200).json({ message: userUpdated });
+    }
+
+    private async deleteUser(req: Request, res: Response) {
+        const { id } = req.params;
+        const userDeleted = await UserRepository.deleteUser(Number(id));
+
+        res.status(200).json({ message: userDeleted });
     }
 }
 
