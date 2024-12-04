@@ -17,11 +17,11 @@ const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 
+app.use(express.json());
+
 app.use(routers);
 
 app.use(httpErrorMiddleware);
-
-app.use(express.json());
 
 AppDataSource.initialize()
 .then( async () => {
