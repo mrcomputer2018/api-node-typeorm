@@ -6,6 +6,7 @@ import express from "express"; //  "esModuleInterop": true, no tsconfig.json
 import cors from "cors"; 
 import {AppDataSource} from "./database/data-source"; // arquivo de conexão com o BD
 import routers from './app/routes/index'// arquivo de rotas
+import httpErrorMiddleware from "./app/middlewares/ErrorMiddleware"; // arquivo de tratamento de erros
 
 //inicio da aplicação
 const app = express();
@@ -17,6 +18,8 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 
 app.use(routers);
+
+app.use(httpErrorMiddleware);
 
 app.use(express.json());
 

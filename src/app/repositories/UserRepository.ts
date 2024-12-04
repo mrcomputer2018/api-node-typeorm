@@ -1,11 +1,18 @@
 import User from "../../entity/User";
-import { IUserOutput } from "../../interfaces/IUser";
+import { IUserInput, IUserOutput} from "../../interfaces/IUser";
 import { AppDataSource } from "../../database/data-source";
 
 export default class UserRepository {
-    private static usersRepository = AppDataSource.getRepository(User);
+    //atributo privado para acessar o repositório de usuários
+    private static usersRepository = AppDataSource.getRepository<User>(User);
 
+    //metodos
     static async getUsers(): Promise<IUserOutput[]> {
         return await this.usersRepository.find();
+    }
+
+    static async newUser(user: IUserInput): Promise<IUserOutput> {
+        const createdUser =  await this.usersRepository.save(user);
+        return createdUser;
     }
 }
