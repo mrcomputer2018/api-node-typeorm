@@ -13,6 +13,7 @@ class UserController {
         this.router.get("/", this.getAllUsers);
         this.router.post("/", this.createdUser);
         this.router.get("/:id", this.getUserById);
+        this.router.put("/:id", this.updateUser);
     }
 
     private async getAllUsers(req: Request, res: Response) {
@@ -32,6 +33,13 @@ class UserController {
         const user = await UserRepository.getUserById(Number(id));
 
         res.status(200).json(user);
+    }
+
+    private async updateUser(req: Request, res: Response) {
+        const { id } = req.params;
+        const userUpdated = await UserRepository.updateUser(Number(id), req.body);
+
+        res.status(200).json({ message: userUpdated });
     }
 }
 

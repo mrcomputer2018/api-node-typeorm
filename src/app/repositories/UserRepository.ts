@@ -26,4 +26,21 @@ export default class UserRepository {
 
         return user
     }
+
+    static async updateUser(id: number, user: IUserInput): Promise<string> {
+
+        const userExists = await this.usersRepository.findOneBy({ id });
+
+        if (!userExists) {
+            throw new ErrorExtension(404, "Usuário não encontrado");
+        }   
+
+        const userUpdated =  await this.usersRepository.update(id, user);
+        
+        if (!userUpdated) {
+            throw new ErrorExtension(500, "Erro ao atualizar usuário");
+        }
+        
+        return "Usuário atualizado com sucesso!!!";
+    }
 }
