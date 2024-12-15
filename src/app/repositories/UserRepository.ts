@@ -4,6 +4,7 @@ import { IUserInput, IUserOutput} from "../../interfaces/IUser";
 import { AppDataSource } from "../../database/data-source";
 import ErrorExtension from "../utils/ErrorExtension";
 import userSchemaValiodation from "../utils/validations/userSchenaValidation";
+import bcrypt from "bcrypt";
 
 export default class UserRepository {
     //atributo privado para acessar o repositório de usuários
@@ -19,11 +20,16 @@ export default class UserRepository {
         const { error } = userSchemaValiodation.validate(user, { abortEarly: false });
 
         if(error) {
-            const validationErrors = error.details.map(( details: ValidationErrorItem) => details.message);
+            const validationErrors = error.details.map(( detail: ValidationErrorItem) => detail.message);
 
-            throw new ErrorExtension(400, validationErrors.join(", "));
+            throw new ErrorExtension(400, validationErrors.join(", \n"));
         }
 
+        //Criptografando dados do usuário
+        const hashedPassword = await bcrypt.hash(user.password, 10);
+        user.password = hashedPassword;
+
+        //salvando usuário no banco de dados
         const createdUser =  await this.usersRepository.save(user);
         return createdUser;
     }
