@@ -10,6 +10,8 @@ const jwtDefaultConfig: SignOptions = {
     algorithm: "HS256",
 }
 
+const JWT_SECRET = process.env.SECRET as string;
+
 export default class Auth {
     constructor(private jwtConfig?: SignOptions) {
         if (!this.jwtConfig) {
@@ -19,7 +21,7 @@ export default class Auth {
 
     // metodo para gerar token
     JwtGenerator(payload: ITokenData): string {
-        const token = sign(payload, process.env.JWT_SECRET, this.jwtConfig);
+        const token = sign(payload, JWT_SECRET, this.jwtConfig);
 
         return token;
     }
