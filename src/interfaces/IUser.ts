@@ -1,5 +1,4 @@
 interface IUserInput {
-    id?: number
     name: string
     email: string
     password: string
@@ -7,8 +6,13 @@ interface IUserInput {
     active?: boolean
 }
 
-interface IUserOutput extends IUserInput {
-    id?: number
+interface IUserOutput{
+    id: number
+    name: string
+    email: string
+    password?: string
+    birth_date: Date
+    active?: boolean
 }
 
 export { IUserInput, IUserOutput }

@@ -12,7 +12,15 @@ export default class UserRepository {
 
     //metodos
     static async getUsers(): Promise<IUserOutput[]> {
-        return await this.usersRepository.find();
+        const users = await this.usersRepository.find();
+
+        //removendo senha do retorno
+        const usersReturned = users.map((user) => {
+            const { password, ...userReturned } = user;
+            return userReturned;
+        });
+
+        return usersReturned;
     }
 
     static async newUser(user: IUserInput): Promise<IUserOutput> {
@@ -31,7 +39,11 @@ export default class UserRepository {
 
         //salvando usuário no banco de dados
         const createdUser =  await this.usersRepository.save(user);
-        return createdUser;
+
+        //removendo senha do retorno
+        const { password, ...userReturned } = createdUser;
+
+        return userReturned as IUserOutput;
     }
 
     static async getUserById(id: number): Promise<IUserOutput | null> {
@@ -41,7 +53,10 @@ export default class UserRepository {
             throw new ErrorExtension(404, "Usuário não encontrado");
         }
 
-        return user
+        //removendo senha do retorno
+        const { password, ...userReturned } = user;
+
+        return userReturned;
     }
 
     static async updateUser(id: number, user: IUserInput): Promise<string> {
@@ -51,13 +66,16 @@ export default class UserRepository {
         if (!userExists) {
             throw new ErrorExtension(404, "Usuário não encontrado");
         }
-        
-        //Criptografando dados do usuário
-        const hashedPassword = await bcrypt.hash(user.password, 10);
-        user.password = hashedPassword;
+
+        //verificando se senha existe
+        if(user.password) {
+            //Criptografando dados do usuário
+            const hashedPassword = await bcrypt.hash(user.password, 10);
+            user.password = hashedPassword;
+        }
 
         const userUpdated =  await this.usersRepository.update(id, user);
-        
+               
         if (!userUpdated) {
             throw new ErrorExtension(500, "Erro ao atualizar usuário");
         }
