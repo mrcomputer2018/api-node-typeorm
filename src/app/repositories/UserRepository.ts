@@ -5,6 +5,8 @@ import { AppDataSource } from "../../database/data-source";
 import ErrorExtension from "../utils/ErrorExtension";
 import userSchemaValiodation from "../utils/validations/userSchenaValidation";
 import bcrypt from "bcrypt";
+import { ILogin } from "../../interfaces/ILogin";
+import Auth from "../utils/auth";
 
 export default class UserRepository {
     //atributo privado para acessar o repositório de usuários
@@ -97,5 +99,52 @@ export default class UserRepository {
         }
 
         return "Usuário deletado com sucesso!!!";
+    }
+
+    static async getUserByEmail(email: string): Promise<IUserOutput | null> {
+        const user = await this.usersRepository.findOneBy({ email });
+
+        if (!user) {
+            throw new ErrorExtension(404, "Email não encontrado");
+        }
+
+        //removendo senha do retorno
+        const { password, ...userReturned } = user;
+
+        return userReturned;
+    }
+
+    static async auth(loginData: ILogin): Promise<string> {
+       const { email, password } = loginData;
+
+       //verificando se email e password existem
+        if (!email || !password) {
+            throw new ErrorExtension(400, "Email e senha são obrigatórios");
+        }
+
+        //buscando usuário pelo email
+        const user = await this.usersRepository.findOneBy({ email });
+
+        if (!user) {
+            throw new ErrorExtension(404, "Usuário não encontrado");
+        }
+
+        //verificando se senha está correta
+        const isValidPassword = await bcrypt.compare(password, user.password);
+
+        if (!isValidPassword) {
+            throw new ErrorExtension(401, "Enail ou Senha incorretos!!!");
+        }
+
+        const payload = {
+            id: user.id,
+            nome: user.name,
+            email: user.email
+        }
+
+        //gerando token
+        const token = new Auth().JwtGenerator(payload);
+
+        return token;
     }
 }
