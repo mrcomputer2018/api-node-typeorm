@@ -50,7 +50,11 @@ export default class UserRepository {
 
         if (!userExists) {
             throw new ErrorExtension(404, "Usuário não encontrado");
-        }   
+        }
+        
+        //Criptografando dados do usuário
+        const hashedPassword = await bcrypt.hash(user.password, 10);
+        user.password = hashedPassword;
 
         const userUpdated =  await this.usersRepository.update(id, user);
         
