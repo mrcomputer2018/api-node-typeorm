@@ -5,12 +5,14 @@ import ErrorExtension from "./ErrorExtension"; // em caso de erro
 
 dotenv.config();
 
+const SECRET = process.env.JWT_SECRET as string;
+
 const jwtDefaultConfig: SignOptions = {
     expiresIn: "1h",
     algorithm: "HS256",
 }
 
-const JWT_SECRET = process.env.SECRET as string;
+process.env.SECRET as string;
 
 export default class Auth {
     constructor(private jwtConfig?: SignOptions) {
@@ -21,7 +23,7 @@ export default class Auth {
 
     // metodo para gerar token
     JwtGenerator(payload: ITokenData): string {
-        const token = sign(payload, JWT_SECRET, this.jwtConfig);
+        const token = sign(payload, SECRET, this.jwtConfig);
 
         return token;
     }
@@ -33,7 +35,7 @@ export default class Auth {
 
         // garantindo que o token e valido
         try {
-            const validateJwt = verify(token, process.env.JWT_SECRET, this.jwtConfig);
+            const validateJwt = verify(token,SECRET , this.jwtConfig);
 
             return validateJwt as ITokenData; // retorna payload com dados do usuario
 

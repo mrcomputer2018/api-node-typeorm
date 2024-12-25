@@ -1,6 +1,6 @@
 import ErrorExtension from "../utils/ErrorExtension";
 import { Request, Response, NextFunction } from "express";
-import Auth from "../utils/auth";
+import Auth from "../utils/Auth";
 
 
 export const AuthenticateMiddleware = async (req: Request, res: Response, next: NextFunction) => {

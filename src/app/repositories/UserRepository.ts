@@ -6,7 +6,7 @@ import ErrorExtension from "../utils/ErrorExtension";
 import userSchemaValiodation from "../utils/validations/userSchenaValidation";
 import bcrypt from "bcrypt";
 import { ILogin } from "../../interfaces/ILogin";
-import Auth from "../utils/auth";
+import Auth from "../utils/Auth";
 
 export default class UserRepository {
     //atributo privado para acessar o repositório de usuários
